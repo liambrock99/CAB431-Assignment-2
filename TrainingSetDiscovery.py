@@ -7,14 +7,19 @@ if __name__ == "__main__":
     topicset = Path('TopicStatements101-150.txt')
     pra = 1.5 # pseudo relevance assumption
 
-    bowdocs = BowDocColl(101)
+    coll = BowDocColl(101)
     for xml_file in (Path('dataset101-150') / 'Training101').iterdir():
-        bowdocs.add_bowdoc(Processor.bowdocify(xml_file))
+        coll.add_bowdoc(Processor.bowdocify(xml_file))
 
-    results = bowdocs.calc_tfidf([stem('economic'), stem('espionage')])
-    with open('test.txt', 'w') as file:
+    results = coll.calc_tfidf([stem('economic'), stem('espionage')])
+    with open('tfidf.txt', 'w') as file:
         for k, v in results.items():
-            file.write(f'{k}:{v}\n')
+            file.write(f'{k}:{v:.5f}\n')
+
+    results = coll.calc_bm25([stem('economic'), stem('espionage')])
+    with open('bm25.txt', 'w') as file:
+        for k, v in results.items():
+            file.write(f'{k}:{v:.5f}\n')
 
     # topics = {}
     # with open(topicset) as file:
