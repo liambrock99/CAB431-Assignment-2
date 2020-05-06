@@ -4,22 +4,27 @@ from BowDoc import *
 
 if __name__ == "__main__":
     dataset = Path('dataset101-150')
-    topicset = Path('TopicStatements101-150.txt')
+    topicset = 'TopicStatements101-150.txt'
     pra = 1.5 # pseudo relevance assumption
 
     coll = BowDocColl(101)
     for xml_file in (Path('dataset101-150') / 'Training101').iterdir():
         coll.add_bowdoc(Processor.bowdocify(xml_file))
 
-    results = coll.calc_tfidf([stem('economic'), stem('espionage')])
+    results = coll.calc_tfidf([stem("economic"), stem("espionage")])
     with open('tfidf.txt', 'w') as file:
-        for k, v in results.items():
-            file.write(f'{k}:{v:.5f}\n')
+        for docid, tfidf in results.items():
+            file.write(f'{docid}: {tfidf:.5f}\n')
 
-    results = coll.calc_bm25([stem('economic'), stem('espionage')])
-    with open('bm25.txt', 'w') as file:
-        for k, v in results.items():
-            file.write(f'{k}:{v:.5f}\n')
+    # results = coll.calc_tfidf([stem('economic'), stem('espionage')])
+    # with open('tfidf.txt', 'w') as file:
+    #     for k, v in results.items():
+    #         file.write(f'{k}:{v:.5f}\n')
+
+    # results = coll.calc_bm25([stem('economic'), stem('espionage')])
+    # with open('bm25.txt', 'w') as file:
+    #     for k, v in results.items():
+    #         file.write(f'{k}:{v:.5f}\n')
 
     # topics = {}
     # with open(topicset) as file:

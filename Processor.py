@@ -1,9 +1,12 @@
 import re
 import string
 import xml.etree.ElementTree as ET
-from nltk.corpus import stopwords
 from stemming.porter2 import stem
 from BowDoc import BowDoc
+
+stopwords = []
+with open('stopwords.txt') as file:
+    stopwords = file.read().split(',')
 
 """ Static methods for processing XML documents """
 class Processor:
@@ -19,7 +22,7 @@ class Processor:
         text = re.sub(r'\d+', '', text) 
         text = text.translate(str.maketrans('',  '', string.punctuation))
         text = text.split()
-        return [stem(term) for term in text if term not in stopwords.words('english') and len(term) > 3]
+        return [stem(term) for term in text if term not in stopwords and len(term) > 3]
 
     def bowdocify(xml_doc):
         """Converts an XML document to a BowDoc representation. 
