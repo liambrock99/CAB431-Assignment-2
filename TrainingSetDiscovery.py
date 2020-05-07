@@ -12,19 +12,14 @@ if __name__ == "__main__":
         coll.add_bowdoc(Processor.bowdocify(xml_file))
 
     results = coll.calc_tfidf([stem("economic"), stem("espionage")])
-    with open('tfidf.txt', 'w') as file:
+    with open('test_tfidf.txt', 'w') as file:
         for docid, tfidf in results.items():
             file.write(f'{docid}: {tfidf:.5f}\n')
-
-    # results = coll.calc_tfidf([stem('economic'), stem('espionage')])
-    # with open('tfidf.txt', 'w') as file:
-    #     for k, v in results.items():
-    #         file.write(f'{k}:{v:.5f}\n')
-
-    # results = coll.calc_bm25([stem('economic'), stem('espionage')])
-    # with open('bm25.txt', 'w') as file:
-    #     for k, v in results.items():
-    #         file.write(f'{k}:{v:.5f}\n')
+    
+    results = coll.calc_bm25([stem("economic"), stem("espionage")])
+    with open('test_bm25.txt', 'w') as file:
+        for docid, tfidf in results.items():
+            file.write(f'{docid}: {tfidf:.5f}\n')
 
     # topics = {}
     # with open(topicset) as file:

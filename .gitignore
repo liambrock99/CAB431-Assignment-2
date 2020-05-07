@@ -2,6 +2,6 @@ dataset101-150
 topicassignment101-150
 baselineresults
 TopicStatements101-150.txt
-test.txt
+test.*
 __pycache__
 .vs

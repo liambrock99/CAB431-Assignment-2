@@ -16,9 +16,13 @@ class BowDoc:
     def __iter__(self):
         return iter(sorted(self.terms.items(), key=lambda x: x[1],reverse=True))
 
-    def get_tf(self):
+    def get_tf(self, term):
+        return  self.terms[term] if term in self.terms else 0
+
+    def get_tfs(self):
         """Returns a dictionary of term:freq pairs adjusted for document length."""
-        return {k: v/self.calc_dl() for k, v in self.terms.items()}
+        dl = self.calc_dl()
+        return {k: v/dl for k, v in self.terms.items()}
 
     def calc_dl(self):
         """Returns the total number of terms in the BowDoc."""
@@ -65,7 +69,6 @@ class BowDocColl:
                     df[term] = 1
         return df
         
-
     def calc_idf(self, df):
         """Calculates the idf for the given df."""
         return log(len(self.coll)/1+df) 
@@ -87,7 +90,7 @@ class BowDocColl:
         dfs = self.get_df() # term:df
 
         for docid, bowdoc in self:
-            tfs = bowdoc.get_tf() # term:freq 
+            tfs = bowdoc.get_tfs() # term:freq 
             tfidf = 0.0
             for term in query:
                 tf = tfs[term] if term in tfs else 0
@@ -95,4 +98,34 @@ class BowDocColl:
                 idf = self.calc_idf(df)
                 tfidf += tf*idf
             results[docid] = tfidf
+        return {k: v for k, v in sorted(results.items(), key=lambda item: -item[1])}
+    
+    def calc_avgdl(self):
+        n = len(self.coll)
+        avgdl = 0.0
+        for bowdoc in self.coll.values():
+            avgdl += bowdoc.calc_dl()
+        return avgdl/n
+
+    def calc_bm25(self, query):
+        results = {}
+        avgdl = self.calc_avgdl()
+        N = len(self.coll)
+        dfs = self.get_df()
+        qfs = {}
+        for qt in query:
+            try:
+                qfs[qt] += 1
+            except KeyError:
+                qfs[qt] = 1
+
+        for docid, bowdoc in self:
+            bm25 = 0.0
+            k = 1.2 * ((1 - 0.75) + 0.75 * (bowdoc.calc_dl() / avgdl))
+            for qt, qf in qfs.items():
+                if qt in dfs:
+                    n = dfs[qt]
+                    f = bowdoc.get_tf(qt)
+                    bm25 += log(1.0 / ((n + 0.5) / (N - n + 0.5)), 2) * (((1.2 + 1) * f) / (k + f)) * ( ((100 + 1) * qf) / (100 + qf))
+            results[docid] = bm25
         return {k: v for k, v in sorted(results.items(), key=lambda item: -item[1])}
