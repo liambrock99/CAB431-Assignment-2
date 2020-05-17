@@ -108,7 +108,7 @@ class BowDocColl:
         return avgdl/n
 
     def calc_bm25(self, query):
-        results = {}
+        results = {} # docid:bm25
         avgdl = self.calc_avgdl()
         N = len(self.coll)
         dfs = self.get_df()
@@ -119,13 +119,21 @@ class BowDocColl:
             except KeyError:
                 qfs[qt] = 1
 
+        # constants
+        k1 = 1.2
+        k2 = 100
+        b = 0.75
+        r = 0 
+        R = 0
+
         for docid, bowdoc in self:
             bm25 = 0.0
-            k = 1.2 * ((1 - 0.75) + 0.75 * (bowdoc.calc_dl() / avgdl))
+            dl = bowdoc.calc_dl()
+            K = k1 * ((1-b) + b * dl/avgdl)
             for qt, qf in qfs.items():
                 if qt in dfs:
                     n = dfs[qt]
                     f = bowdoc.get_tf(qt)
-                    bm25 += log(1.0 / ((n + 0.5) / (N - n + 0.5)), 2) * (((1.2 + 1) * f) / (k + f)) * ( ((100 + 1) * qf) / (100 + qf))
+                    bm25 += log(((r+0.5)/(R-r+0.5)) / ((n-r+0.5)/(N-n-R+r+0.5)), 2) * (((k1+1) * f) / (K+f)) * (((k2+1) * qf) / (k2+qf))
             results[docid] = bm25
         return {k: v for k, v in sorted(results.items(), key=lambda item: -item[1])}
