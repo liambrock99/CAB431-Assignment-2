@@ -28,7 +28,7 @@ class BowDoc:
         """Returns the total number of terms in the BowDoc."""
         return sum(self.terms.values())
 
-    def get_doc_id(self):
+    def get_docid(self):
         return self.doc_id
 
     def get_terms(self):
@@ -53,10 +53,14 @@ class BowDocColl:
     def __init__(self, coll_id):
         self.coll = {}
         self.coll_id = coll_id
-    
+
     def __iter__(self):
         """Returns an iterator over the collection."""
         return iter(self.coll.items())
+
+    def get_coll_len(self):
+        """Returns the length of the collection."""
+        return len(self.coll)
 
     def get_df(self):
         """Returns a dictionary of term:df pairs for the collection."""
@@ -75,7 +79,7 @@ class BowDocColl:
 
     def add_bowdoc(self, bowdoc):
         """Adds a BowDoc object to the collection."""
-        self.coll[bowdoc.get_doc_id()] = bowdoc
+        self.coll[bowdoc.get_docid()] = bowdoc
 
     def calc_tfidf(self, query):
         """Calculates the TF*IDF value for the given query for each BowDoc in the collection.
