@@ -3,6 +3,7 @@ topicassignment101-150
 baselineresults
 TopicStatements101-150.txt
 result
+EvaluationResult.dat
 test.*
 __pycache__
 .vs

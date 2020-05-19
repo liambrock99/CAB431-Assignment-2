@@ -59,7 +59,7 @@ if __name__ == "__main__":
         ranking = testing(coll, features)
         with open(result / f'result{topic}.dat', 'w') as file:
             for k,v in ranking.items():
-                file.write(f'{k}:{v}\n')
+                file.write(f'{k} {v}\n')
 
 
   
